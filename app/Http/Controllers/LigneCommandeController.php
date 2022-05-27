@@ -25,8 +25,6 @@ class LigneCommandeController extends Controller
     {
         $bon_commande_frs = BonCommandeFrs::find($id);
         $produits = Produit::all();
-        $fournisseur = Fournisseur::find($bon_commande_frs['fournisseur_id']);
-        // dd($bon_commande_frs->lignes_commandes[0]->produit);
         return view('Ligne Commande/LigneCommande', compact('bon_commande_frs'),compact('produits'));
     }
 
@@ -45,45 +43,34 @@ class LigneCommandeController extends Controller
         $input['designation'] = $produit['designation'];
         $input['pu'] = $produit['prix'];
         $input['mont_Ht']= $input['pu']*$input['qte'];
-        if (($produit['quantite']-$input['qte'])<0){
-            return back()->with('msgfail', 'La quantité est superieur a la quantité en stock!!');
-        }
         LigneCommande::create($input);
         return back();
     }
-    // public function store(Request $request)
-    // {
-        // $req = $request->all();
-        // Input::create($req);
-        // return redirect('/add/'.$req["produit_id"]);
-    // }
-
-
-
+    
     /**
      * Show the form for editing the specified resource.
      *
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        $ligne_commande = LigneCommande::find($id);
-        $produits=Produit::all();
-        return view('Ligne Commande/edit' , compact('produits'),compact('ligne_commande'));
-    }
-    public function update(Request $request, $id)
-    {
-        $ligne_commande = LigneCommande ::find($id); // produit  est le nom de model
-        $input = $request->all();
-        $produit=Produit::find($input['produit_id']);
-        $input['designation'] = $produit['designation'];
-        $input['pu'] = $produit['prix'];
-        $input['mont_Ht']= $input['pu']*$input['qte'];
-        $ligne_commande->update($input);
-        return redirect('/Lignes_commandes/'.$ligne_commande->bon_commande_frs_id)->with('msgmod', 'Lignes de commandes modifié !!');  //cette fonction faire la modification ajouter dans la tabel puis redirection au page index
-    }  
 
+    public function edit(Request $request)
+    {   
+        $input = $request->all();
+        $LigneCommandeTable = LigneCommande::find($input['ligne_id']); 
+        $ValidateInput = [];
+        foreach ($input as $key => $value) {
+            if ($value != null) {
+                $ValidateInput[$key] = $value;
+            };
+        }
+        $nouvelleProduit = Produit::find($input['produit_id']);
+        $ValidateInput['designation'] = $nouvelleProduit->designation;
+        $ValidateInput['pu'] = $nouvelleProduit->prix;
+        $ValidateInput['mont_Ht'] = $nouvelleProduit->prix * $input['qte']; 
+        $LigneCommandeTable->update($ValidateInput);
+        return back();
+    }
 
     /**
      * Remove the specified resource from storage.

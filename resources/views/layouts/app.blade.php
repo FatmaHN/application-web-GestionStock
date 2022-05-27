@@ -88,7 +88,7 @@
                      </div>
 
 
-                   <ul class="side-menu app-sidebar3">
+                   <ul class="side-menu app-sidebar3 ">
                     
                         <li class="slide">
                             <a class="side-menu__item"  href="/home"> 

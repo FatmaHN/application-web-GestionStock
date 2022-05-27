@@ -42,9 +42,6 @@ class LigneCommandeClientController extends Controller
         $input['designation'] = $produit['designation'];
         $input['pu'] = $produit['prix'];
         $input['mont_Ht']= $input['pu']*$input['qte'];
-        if (($produit['quantite']-$input['qte'])<0){
-            return back()->with('msgfail', 'La quantité est superieur a la quantité en stock!!');
-        }
         lignecommandeclient::create($input);
         return back();
     }
@@ -60,7 +57,7 @@ class LigneCommandeClientController extends Controller
     {
         $boncommandeclient = BoncommandeClient::find($id);
         $produits = Produit::all();
-        //dd($boncommandeclient->client);
+        // dd($boncommandeclient->lignecommandeclients);
         $client = Client::find($boncommandeclient['client_id']);
         return view('lignecommandeclient.lignecommande', compact('boncommandeclient'),compact('produits'));
     }
@@ -73,9 +70,7 @@ class LigneCommandeClientController extends Controller
      */
     public function edit($id)
     {
-        $lignecommandeclient = lignecommandeclient::find($id);
-        $produits=Produit::all();
-        return view('lignecommandeclient.edit' , compact('produits'),compact('lignecommandeclient'));
+        
     }
 
     /**
@@ -85,20 +80,23 @@ class LigneCommandeClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $lignecommandeclient = lignecommandeclient ::find($id); // produit  est le nom de model
         $input = $request->all();
-        $produit=Produit::find($input['produit_id']);
-        $input['designation'] = $produit['designation'];
-        $input['pu'] = $produit['prix'];
-        $input['mont_Ht']= $input['pu']*$input['qte'];
-        if (($produit['quantite']-$input['qte'])<0){
-            return back()->with('msgfail', 'La quantité est superieur a la quantité en stock!!');
+        $LigneCommandeTable = lignecommandeclient::find($input['ligne_id']); 
+        $ValidateInput = [];
+        foreach ($input as $key => $value) {
+            if ($value != null) {
+                $ValidateInput[$key] = $value;
+            };
         }
-        $lignecommandeclient->update($input);
-        return redirect('/lignecommandeclient/'.$lignecommandeclient->Boncommande_client_id)->with('msgmod', 'Lignes de commandes modifié !!');  //cette fonction faire la modification ajouter dans la tabel puis redirection au page index
-    }  
+        $nouvelleProduit = Produit::find($input['produit_id']);
+        $ValidateInput['designation'] = $nouvelleProduit->designation;
+        $ValidateInput['pu'] = $nouvelleProduit->prix;
+        $ValidateInput['mont_Ht'] = $nouvelleProduit->prix * $input['qte']; 
+        $LigneCommandeTable->update($ValidateInput);
+        return back(); 
+       }
 
     /**
      * Remove the specified resource from storage.
@@ -106,10 +104,9 @@ class LigneCommandeClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-
-        lignecommandeclient::where('id',$request->id)->delete();
-        return back()->with('msg','ligne à supprimer');
+        lignecommandeclient::destroy($id);
+        return back();
     }
 }

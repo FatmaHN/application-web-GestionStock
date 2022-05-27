@@ -40,6 +40,11 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
+        $exist=Client::where("Nom_Prenom","=",$request->Nom_Prenom)
+        ->where("adresse_cli","=",$request->adresse)
+        ->where("num_tel","=",$request->num_tel)
+        ->where("email_cli","=",$request->email)
+        ->first();
        $exist=Client::where("email_cli","=",$request->email_cli)->first();
        if($exist!=null)
        {
@@ -112,7 +117,7 @@ class ClientController extends Controller
     $clients = $request->clients;
 
     $clients = Client::where('Nom_Prenom', 'like', '%'.$clients.'%')->orWhere('adresse_cli', 'like', '%'.$clients.'%')
-        ->orderBy('nom_prenom')
+        ->orderBy('Nom_Prenom')
         ->paginate(5);
 
     return view('Client.index')

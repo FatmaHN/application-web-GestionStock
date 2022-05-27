@@ -11,6 +11,8 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\BonCommandeFrsController;
 use App\Http\Controllers\GenerateController;
+use GuzzleHttp\Psr7\Request;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,10 +26,6 @@ use App\Http\Controllers\GenerateController;
 
 
 // First Page Route
-
-/*Route::get('/', function () {
-    return view('auth.login');
-});*/
 
 Route::get('/', function () {
     return view('welcome2');
@@ -65,7 +63,7 @@ Route::middleware(['auth'])->group(function(){
 
 Route::get('/Ligne_commandes/{id}', [LigneCommandeController::class, 'destroy']);
 Route::post('/storeLignes_commandes', [LigneCommandeController::class, 'store'])->name('storeLignes_commandes');
-
+Route::post('/Lignes_commandes/change',[LigneCommandeController::class, 'edit']);
 //stock routes 
 
 Route::middleware(['auth'])->group(function(){
@@ -89,8 +87,9 @@ Route::middleware(['auth'])->group(function(){
     Route::delete('/boncommandeclient/{id}', [BoncommandeclientController::class, 'destroy']);
     Route::post('/boncommandeclient/add', [BoncommandeclientController::class, 'store']);
     Route::get('/lignecommandeclient/{id}', [LigneCommandeClientController::class, 'show']);
+    Route::get('/delete_Ligne_commandes/{id}', [LigneCommandeClientController::class, 'destroy']);
     Route::post('/lignecommandeclient', [LigneCommandeClientController::class, 'store']);
-
+    Route::post('/lignecommandeclient/change', [LigneCommandeClientController::class, 'update']);
 });
 
 // Generate Routes

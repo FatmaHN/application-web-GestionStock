@@ -7,6 +7,7 @@ use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\bonDeCommandeRequest;
 
 class BoncommandeclientController extends Controller
 {
@@ -24,13 +25,15 @@ class BoncommandeclientController extends Controller
         
         return view('boncommandeclient.create', compact('clients'));
     }
-    public function store(Request $request)
+    public function store(bonDeCommandeRequest $request)
     {   
+        dd($request);
         $data1 = array(   
             'desc'=>$request->desc,
             'client_id'=>$request->client_id,
             'dat_com'=>$request->dat_com,
-            'dat_exp'=>$request->dat_exp,
+            'dat_exp'=>$request->dat_com,
+            'remise' => $request->remise,
         );
         $data2 = array(     
             'Nom_Prenom'=>$request->Nom_Prenom,
@@ -44,13 +47,13 @@ class BoncommandeclientController extends Controller
             BoncommandeClient::create($data1);
         }
         if ($data2["type_de_client"] == 'passager'){
+            $data1['remise'] = 0;
             $client=client::create($data2);
             $data1['client_id']=$client['id'];
             BoncommandeClient::create($data1);
         }
         
-        
-        return redirect('/boncommandeclient');
+        return response()->json(['message' => "Votre bon de commande a bien passée ",$data1]);
         
     }
 
@@ -76,7 +79,14 @@ class BoncommandeclientController extends Controller
     {
         $bon_commande_client = BoncommandeClient::find($id);
         $clients = Client::all();
-        return view('boncommandeclient.edit',compact('bon_commande_client'),compact('clients'));
+        $currentValue = $bon_commande_client->statut;
+        if ($currentValue == 'Envoyée') {
+            $possibleValues = [];
+        }
+        if ($currentValue == 'En préparation') {
+            $possibleValues = ['En préparation','Envoyée'];
+        };
+        return view('boncommandeclient.edit',compact('bon_commande_client','clients','possibleValues'));
     }
 
     /**

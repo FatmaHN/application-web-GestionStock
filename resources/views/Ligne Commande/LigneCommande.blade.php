@@ -3,16 +3,6 @@
 @extends('layouts.app')
 @section('content')
 <body>
-@if ($message = Session :: get ('msgfail')) 
-                            <div class="alert  alert-danger">
-                            {{$message}}
-                            </div>
-                        @endif
-                        @if ($message = Session :: get ('msgmod')) 
-                            <div class="alert  alert-success">
-                            {{$message}}
-                            </div>
-                        @endif
 <div class="container mt-2">
   <form method="get" action="/generate/{{$bon_commande_frs->id}}">
     <div class="row">
@@ -43,16 +33,17 @@
                   <th scope="col">Action</th>
                 </tr>
               </thead>
-              <tbody class="table-striped"> 
+              <tbody class="table-striped text-center"> 
                 @foreach ($bon_commande_frs->lignes_commandes as $ligne)
-                <tr class="text-center">
+                <tr>
                     <td>{{ $ligne->designation }}</td>
                     <td quantity="{{$ligne->qte}}" class = "price">{{ $ligne->pu }}</td>
                     <td>{{ $ligne->qte }}</td>
                     <td>{{ $ligne->mont_Ht }}</td>
                     <td>
-                     <!-- <a href="{{ url('/Ligne_commandes/' . $ligne->id . '/edit') }}" class="btn btn-success edit" data-id="{{ $ligne->id }}"><i class="si si-pencil" aria-hidden="true"> Modifier</i></a> -->
                       <a href="{{ url('/Ligne_commandes/' . $ligne->id . '') }}" class="btn btn-danger delete" ><i class="fe fe-trash" aria-hidden="true"> Supprimer</i></a>
+                        <!-- Button trigger modal -->
+                      <button type="button" class="btn btn-success edition" data-id="{{$ligne->id}}" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="si si-pencil" aria-hidden="true"> Modifier</i></button>
                     </td>
                 </tr>
                 @endforeach
@@ -78,16 +69,50 @@
             </table>
         </div>
     </div>
-    
-       
-    
     <div class="text-center">
-    <button type="submit" class="btn-secondary btn-lg">Voir La Commande</button>&nbsp;
-    <a href="/generateWithEnvoi/{{$bon_commande_frs->id}}" id="envoimail" class="btn btn-secondary btn-lg">Envoyer La Commande</a>  
+    <button type="submit" class="btn btn-secondary btn-lg ">Voir La Commande</button>
+    <a href="/generateWithEnvoi/{{$bon_commande_frs->id}}" id="envoimail" class="btn btn-secondary btn-lg ">Envoyer La Commande</a>    
     </div>
   </form>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Changer un produit</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form  action="{{'/Lignes_commandes/change'}}" method="POST" class="form-horizontal" >
+          {!! csrf_field() !!}
+          <div class="form-group">
+            <label for="produit" class="col-sm-2 control-label">Produit</label>
+            <select class="form-control"  id="produit_id" value="" placeholder="Entrer produit" name="produit_id" required>
+              @foreach($produits as $produit)
+                <option name="produit_id" value="{{ $produit->id}}" >{{ $produit->designation}} </option>
+              @endforeach
+            </select>
+          </div>
+          <input style="display:none" name="ligne_id" id="ligne_id" >
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Quantité</label>
+            <div class="col-sm-12">
+              <input type="text" class="form-control" id="qte" name="qte" placeholder="Entrer quantité" value="" required="">
+            </div>
+          </div>
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary" id="btn-save" value="addNewProd">Enregistre les changements</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- boostrap model -->
     <div class="modal fade" id="ajax-prod-model" aria-hidden="true">
       <div class="modal-dialog">
@@ -113,8 +138,8 @@
                   <input type="text" class="form-control" id="qte" name="qte" placeholder="Entrer quantité" value="" required="">
                 </div>
               </div>
-              <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary" id="btn-save" value="addNewProd">Enregister</button>
+              <div class="col-sm-offset-2 col-sm-10 text-center">
+                <button type="submit" class="btn btn-primary" id="btn-save" value="addNewProd">Enregistre</button>
               </div>
             </form>
           </div>
@@ -127,7 +152,7 @@
 <script type="text/javascript">
     $('#addNewProd').click(function () {
        $('#addEditProdForm').trigger("reset");
-       $('#ajaxProdModel').html("Ajouter un nouveau poroduit");
+       $('#ajaxProdModel').html("Ajouter un produit");
        $('#ajax-prod-model').modal('show');
     });
     //calcul du THT, TVA et TTC
@@ -152,6 +177,11 @@
     updateTotales();
     $("#ajout").submit(function (e) { 
       updateTotales();
+    });
+    $(".edition").click(function (e) { 
+      e.preventDefault();
+      $("#ligne_id").val($(this).attr('data-id'));
+      console.log($(this).attr('data-id'));
     });
 </script>
 @endsection

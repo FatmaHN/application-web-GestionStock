@@ -1,38 +1,39 @@
 @extends('layouts.app')
 @section('content')
-@if ($message = Session :: get ('msgfail')) 
-                            <div class="alert  alert-danger">
-                            {{$message}}
-                            </div>
-                        @endif
-                        @if ($message = Session :: get ('msgmod')) 
-                            <div class="alert  alert-success">
-                            {{$message}}
-                            </div>
-                        @endif
+ 
 <div class="card">
-  <div class="card-header">Modifier Le Ligne De Commande</div>
-  <div class="card-body">
-      
-      <form action="{{ url('/lignecommandeclient/edit/' .$lignecommandeclient->id) }}" method="post"> <!-- url est le direction aprés le remplissage de formulaire -->
+  <div class="mt-5 text-center">
+      <h1>Modifier ce Bon de commande</h1>
+  </div>
+    @if ($message = Session :: get ('msg')) 
+      <div class="alert alert-success">
+      {{$message}}
+      </div>
+    @endif
+  <div class="card-body">   
+      <form action="{{ url('boncommandeclient/' .$bon_commande_client->id) }}" method="post">
         {!! csrf_field() !!}
         @method("PATCH")
-        @csrf
-        <input type="hidden" name="id" id="id" value="{{$lignecommandeclient->designation	}}" id="id" /> <!-- $produits "produits nom de table " -->
-        <div class="form-group">
-            <label for="produit" class="col-sm-2 control-label">Produit</label>
-            <select class="form-control"  id="produit_id" value="" placeholder="Entrer produit" name="produit_id" required>
-                @foreach($produits as $produit)
-                    <option name="produit" value="{{ $produit->id}}" >{{ $produit->designation}} </option>
-                @endforeach
-            </select>
-        </div>
-        <label>Quantité</label></br>
-        <input type="text" name="qte" id="qte" value="{{$lignecommandeclient->qte	}}" class="form-control"></br>
-        <input type="submit" value="Modifier" class="btn btn-success"></br>
-    </form>
-   
+        <input type="hidden" name="id" id="id" value="" id="id" />
+        <label>Description</label></br>
+        <input type="text" name="desc" id="desc" value="" class="form-control"></br>
+        <label>Date d'expiration</label></br>
+        <input type="date" name="dat_exp" id="dat_exp" value="" class="form-control"></br>
+        <label for="client_id" class="form-label">client</label>
+        <select class="form-control @error('client_id') is-invalid @enderror" id="client_id" name="client_id" required="">
+            @foreach($clients as $client)
+                    value="{"{$client->id}}"
+                <option value="{{$client->id}}" >{{ $client->Nom_Prenom }}</option>
+            @endforeach
+        </select>
+        <div class="form-label">Changer l'etat de votre commande</div>
+        <select class="mt-2 form-control @error('client_id') is-invalid @enderror" id="statut" name="statut" required="">
+            @foreach($possibleValues as $val)
+              <option value="{{$val}}"> {{ $val }}</option>
+            @endforeach
+        </select>
+        <input type="submit" value="Update" class="my-2 btn btn-success"></br>
+    </form>  
   </div>
 </div>
- 
 @stop

@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Bon de commande fournisseur</div>
+                    <div class="card-header"><h4>Commande fournisseur</h4></div>
                         @if ($message = Session :: get ('msg')) 
                             <div class="alert alert-success">
                                 {{$message}}

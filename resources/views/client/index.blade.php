@@ -65,7 +65,7 @@ form.example::after {
                         
                     
                     <div class="card-body">
-                        <a href="{{ url('/client/create') }}" class="btn bg-primary-transparent" title="Add New client">
+                        <a href="{{ url('/client/create') }}" class="btn btn-primary" title="Add New client">
                         <i class="fe fe-plus"></i>  Ajouter un nouveau Client
                         </a>   
                         <form action="{{ route('clientSearch') }}" method="POST" class="example" role="search">
@@ -83,9 +83,7 @@ form.example::after {
                                 <input type="text" name="clients"  placeholder="Nom, Adresse..."> 
                                 <button type="submit" ><i class="fe fe-search">Chercher</i></button>
                             </div>
-                        </form>
-                            
-                        
+                        </form>  
                     </div>
                         <div class="table-responsive">
                             <table class="table table-hover table-striped">

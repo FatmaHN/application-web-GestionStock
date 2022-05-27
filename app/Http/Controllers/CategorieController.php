@@ -37,6 +37,9 @@ class CategorieController extends Controller
      */
     public function store(Request $request)
     {
+        $exist=Categorie::where("nomcat","=",$request->nomcat)
+        ->where("desccat","=",$request->desccat)
+        ->first();
         $exist=Categorie::where("nomcat","=",$request->nomcat)->first();
        if($exist!=null)
        {

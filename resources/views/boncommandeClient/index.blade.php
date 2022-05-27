@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Bon de commande client</div>
+                    <div class="card-header"><h4>Commande client</h4></div>
                         <!-- @if ($message = Session :: get ('msg')) 
                             <div class="alert alert-success">
                             {{$message}}
@@ -29,6 +29,7 @@
                                         <th>Date d'expiration</th>
                                         <th>Statut</th>
                                         <th>Client</th>                                  
+                                        <th>Remise</th>                                  
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -40,6 +41,7 @@
                                         <td>{{$item->dat_exp}}</td>
                                         <td><h5><span id="{{$item->id}}" class="badge rounded-pill text-dark">{{$item->statut}}</span></h5></td>
                                         <td>{{$item->Client->Nom_Prenom ?? $item->Nom_Prenom }}</td> 
+                                        <td>{{$item->remise ?? 0 }}%</td> 
                                         <td>
                                             <div class="row">
                                                 <div class="m-1 col">

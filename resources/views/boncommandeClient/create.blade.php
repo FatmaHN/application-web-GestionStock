@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 @section('content')
 <div class="row">
@@ -56,18 +55,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="my-3" id="cliFidele">
-                        <label for="client_id" class="form-label">client</label>
-                        <select class="form-control " id="client_id" name="client_id" required="">
-                            <option value="" selected disabled hidden>Select Client</option>
-                            @foreach($clients as $client)
-                                <option value="{{$client->id}}" >{{$client->id}} - {{ $client->Nom_Prenom }}</option>
-                            @endforeach
-                            <option value="NULL" selected disabled hidden>Select Client</option>
-                        </select>
-                        @error('client_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <div class="my-3 row" id="cliFidele">
+                        <div class="col">
+                            <label for="client_id" class="form-label">Client</label>
+                            <select class="form-control " id="client_id" name="client_id" required="">
+                                <option value="" selected disabled hidden>Select Client</option>
+                                @foreach($clients as $client)
+                                    <option value="{{$client->id}}" >{{$client->id}} - {{ $client->Nom_Prenom }}</option>
+                                @endforeach
+                                <option value="NULL" selected disabled hidden>Select Client</option>
+                            </select>
+                            @error('client_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col">
+                            <label for="" class="form-label">Pourcentage de remise</label>
+                            <input type="number" class="form-control" id="remise" min ="1" max = "50" name="remise" aria-label="Last name">
+                        </div>
                     </div>
                     <div class="my-3 row">
                         <div class="col">
@@ -80,9 +85,6 @@
                         <div class="col">
                             <label for="dat_exp" class="form-label">Date d'expiration</label>
                             <input type="date" name="dat_exp" id="dat_exp" class="form-control @error('dat_exp') is-invalid @enderror" required="">
-                            @error('dat_exp')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
                     </div>
                     <div style="display:none" id="err" class="text-center mb-2 invalid-feedback">S'il vous plait choisissez des dates valides</div>
@@ -139,39 +141,41 @@
                 e.preventDefault();
                 $("#err").hide();
             });
-            // //tester la durée entre la date de confirmation et la date d'expiration
-            // $("#submission").submit(function (e) {
-            //     e.preventDefault();
-            //     var form_url = $(this).attr('action');
-            //     var form_method = $(this).attr('method');
-            //     var form_data = $(this).serialize();
-            //     var date_exp = $("#dat_exp").val().split('-');
-            //     var date_com = $("#dat_com").val().split('-');
-            //     // console.log(conversionArray(date_com));
-            //     // console.log(actualDate);
-            //     console.log(equals(conversionArray(date_com),actualDate));
-            //     var con1 = date_com[0] == date_exp[0];
-            //     var diff = date_exp[1] - date_com[1]
-            //     var con2 = diff < 2 && diff >= 0;
-            //     if (date_com.length == 1 || date_exp.length == 1 || !con1 || !con2 || !equals(conversionArray(date_com),actualDate)) {
-            //         $("#err").show();
-            //         return 
-            //     }
-            //     if ((diff == 0 && (dat_exp[2]-date_com[2]) > 20) || (diff == 1 && (date_exp[2] - date_com[2] + 30 ) > 20) ) {
-            //         $("#err").text(prud);
-            //         $("#err").show();
-            //         return
-            //     }
-                // $.ajax({
-                //     url : form_url,
-                //     type: form_method,
-                //     data: form_data
-                // }).done(function(response){
-                //     $("#alert").text(response['message']);
-                //     $("#alert").show();
-                //     $("#alertsuivre").show();
-                // })
+            //tester la durée entre la date de confirmation et la date d'expiration
+            $("#submission").submit(function (e) {
+                e.preventDefault();
+                var form_url = $(this).attr('action');
+                var form_method = $(this).attr('method');
+                var form_data = $(this).serialize();
+                var date_exp = $("#dat_exp").val().split('-');
+                var date_com = $("#dat_com").val().split('-');
+                // console.log(conversionArray(date_com));
+                // console.log(actualDate);
+                console.log(equals(conversionArray(date_com),actualDate));
+                var con1 = date_com[0] == date_exp[0];
+                var diff = date_exp[1] - date_com[1]
+                var con2 = diff < 2 && diff >= 0;
+                if (date_com.length == 1 || date_exp.length == 1 || !con1 || !con2 || !equals(conversionArray(date_com),actualDate)) {
+                    $("#err").show();
+                    return 
+                }
+                if ((diff == 0 && (dat_exp[2]-date_com[2]) > 20) || (diff == 1 && (date_exp[2] - date_com[2] + 30 ) > 20) ) {
+                    $("#err").text(prud);
+                    $("#err").show();
+                    return
+                }
+                console.log(form_data);
+                $.ajax({
+                    url : form_url,
+                    type: form_method,
+                    data: form_data
+                }).done(function(response){
+                    $("#alert").text(response['message']);
+                    $("#alert").show();
+                    $("#alertsuivre").show();
+                })
             });
+        });
     </script>
 @push('scripts')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
