@@ -27,7 +27,6 @@ class BoncommandeclientController extends Controller
     }
     public function store(bonDeCommandeRequest $request)
     {   
-        dd($request);
         $data1 = array(   
             'desc'=>$request->desc,
             'client_id'=>$request->client_id,

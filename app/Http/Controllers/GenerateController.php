@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\BoncommandeClient;
 use App\Models\Client;
 use App\Models\lignecommandeclient;
+use App\Models\Produit;
 use Illuminate\Support\Arr;
 
 class GenerateController extends Controller
@@ -24,14 +25,15 @@ class GenerateController extends Controller
 
     public function displayclient($id)
     
-    {
-        $boncommande_clients = BoncommandeClient::find($id);
-        $client=$boncommande_clients->client;
-        if ($client == NULL) {
-            $client = Client::find($boncommande_clients['client_id']);
-        }     
-        return view('displayclient',compact('boncommande_clients'),compact('client'));
-    }
+        {
+            $boncommande_clients = BoncommandeClient::find($id);
+            $client=$boncommande_clients->client;
+            $remise = $boncommande_clients->remise;
+            if ($client == NULL) {
+                $client = Client::find($boncommande_clients['client_id']);
+            }     
+            return view('displayclient',compact('boncommande_clients','client','remise'));
+        }
 
     public function sendToFournisseur($id)
     {
@@ -51,6 +53,14 @@ class GenerateController extends Controller
         $commandeDetails['client'] = BoncommandeClient::find($id)->Client;
         $commandeDetails['commandeDetails'] = BoncommandeClient::find($id);
         $ligne_commandes = BoncommandeClient::find($id)->lignecommandeclients;
+        //mettre à jour la quantité du stock
+        foreach ($ligne_commandes as $value) {
+            $produit = Produit::find($value->produit_id);
+            $produit->quantite -= $value->qte;
+            $produit->save();
+        }
+        $remise = $commandeDetails['commandeDetails']->remise;
+        $commandeDetails['remise'] = $remise;
         $commandeDetails['lignecommandeclients'] = $ligne_commandes;
         $commandeDetails['type'] = 1 ;// 1 c'est à dire une commande à un client
         Mail::to($ClientMail)

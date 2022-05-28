@@ -5,6 +5,8 @@ foreach ($contact['lignecommandeclients'] as $produit){
    $total_hors_taxe += $produit->qte * $produit->pu; 
 }
 $total_TTC = $total_hors_taxe + $total_hors_taxe * (19/100);
+$promo = $total_TTC*($contact['remise']/100); 
+$total_TTC -= $promo;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -81,6 +83,10 @@ $total_TTC = $total_hors_taxe + $total_hors_taxe * (19/100);
                                             
                                             <th colspan="3" class="text-right">19% TVA:</th>
                                             <th class="text-center">{{$total_hors_taxe*(19/100)}} DT</th>
+                                        </tr>
+                                        <tr>  
+                                            <th colspan="3" class="text-right">Remise:</th>
+                                            <th class="text-center">{{$promo}} DT</th>
                                         </tr>
                                         <tr>
                                         

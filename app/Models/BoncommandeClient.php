@@ -11,7 +11,7 @@ class BoncommandeClient extends Model
     use HasFactory;
     protected $table = 'boncommande_clients';
     protected $primaryKey = 'id';
-    protected $fillable = ['desc','dat_com','dat_exp','client_id','statut'];
+    protected $fillable = ['desc','dat_com','dat_exp','client_id','statut','remise'];
     public function client(){
         return $this->belongsTo('App\Models\Client');
     }
